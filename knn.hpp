@@ -1,6 +1,7 @@
 #include "./Eigen/Dense"
 #include <vector>
 #include <fstream>
+#include "utils.hpp"
 using namespace std;
 typedef Eigen::MatrixXd Matrix;
 
@@ -39,29 +40,13 @@ public:
 		return &(this->dataset);
 	}
 
-	void setDataset(string dataSetFileName)
+	void setDataset(vector<Matrix> dataset, vector<int> labels)
 	{
-
-		ifstream dataSetFile;
-		dataSetFile.open(dataSetFileName);
-		if (dataSetFile.is_open())
-		{
-			string image = "";
-
-			getline(dataSetFile, image); // Primer linea, no la queremos
-			while (getline(dataSetFile, image))
-			{
-				this->dataset.push_back(matrixize(image));
-			}
-			dataSetFile.close();
-		}
-		else
-		{
-			throw 502;
-		}
+		this -> dataset = dataset;
+		this -> labels = labels;
 	}
 
-	void testImages(vector<Matrix> &testImages, int k)
+	vector<int> testImages(vector<Matrix> &testImages, int k)
 	{
 
 		vector<int> responses;
@@ -70,6 +55,8 @@ public:
 		{
 			responses.push_back(recognize(testImages[i], k));
 		}
+
+		return responses;
 	}
 
 private:
