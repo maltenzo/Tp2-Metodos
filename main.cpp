@@ -4,7 +4,6 @@
 
 using namespace std;
 
-
 void handleError(int error)
 {
 
@@ -26,7 +25,39 @@ void handleError(int error)
 	}
 }
 
-void csvImagesToMatrixVector(string csvImagesFileName, vector<Matrix>& matrixVector){
+Matrix matrixize(string s, string del = ",")
+{
+
+	Matrix matrix(28, 28);
+
+	int start = 0;
+	int end = s.find(del);
+
+	for (int i = 0; i < 28; i++)
+	{
+		for (int j = 0; j < 28; j++)
+		{
+
+			matrix(i, j) = stod(s.substr(start, end - start));
+			start = end + del.size();
+			end = s.find(del, start);
+
+			if (end == -1)
+			{
+				matrix(i, j) = stod(s.substr(start, end - start));
+				break;
+			}
+		}
+		if (end == -1)
+		{
+			break;
+		}
+	}
+	return matrix;
+}
+
+void csvImagesToMatrixVector(string csvImagesFileName, vector<Matrix> &matrixVector, string delimitador = ",")
+{
 
 	ifstream csvImagesFile;
 	csvImagesFile.open(csvImagesFileName);
@@ -36,8 +67,8 @@ void csvImagesToMatrixVector(string csvImagesFileName, vector<Matrix>& matrixVec
 
 		getline(csvImagesFile, image); // Primer linea, no la queremos
 		while (getline(csvImagesFile, image))
-		{				
-			matrixVector->push_back(matrixize(image));
+		{
+			matrixVector.push_back(matrixize(image));
 		}
 		csvImagesFile.close();
 	}
@@ -45,14 +76,36 @@ void csvImagesToMatrixVector(string csvImagesFileName, vector<Matrix>& matrixVec
 	{
 		throw 502;
 	}
-
 }
 
-
-
-int main(int argc, char ** argv)
+// Version que procesa labels, es un overload de la otra
+void csvImagesToMatrixVector(string csvImagesFileName, vector<Matrix> &matrixVector, vector<int> &labels, string delimitador = ",")
 {
-try
+
+	ifstream csvImagesFile;
+	csvImagesFile.open(csvImagesFileName);
+	if (csvImagesFile.is_open())
+	{
+		string image = "";
+
+		getline(csvImagesFile, image); // Primer linea, no la queremos
+		while (getline(csvImagesFile, image))
+		{
+			int posicionDelPrimerDelimitador = image.find(delimitador);
+			labels.push_back(stoi(image.substr(0, posicionDelPrimerDelimitador)));
+			matrixVector.push_back(matrixize(image.substr(posicionDelPrimerDelimitador + delimitador.size())));
+		}
+		csvImagesFile.close();
+	}
+	else
+	{
+		throw 502;
+	}
+}
+
+int main(int argc, char **argv)
+{
+	try
 	{
 		if (argc != 5)
 			throw 500;
@@ -66,16 +119,18 @@ try
 		if (method > 1 || method < 0)
 			throw 501;
 
+		vector<int> testLabels;
 		vector<Matrix> testImages;
-		csvImagesToMatrixVector(testFileName, &testImages);
+		csvImagesToMatrixVector(testFileName, testImages);
 
 		// inicio el reloj para medir la duración del algoritmo
 		auto start = chrono::steady_clock::now();
 
-		if(method == 0){ //KNN
+		if (method == 0)
+		{ // KNN
 			Knn knnMethod;
 			knnMethod.setDataset(trainFileName);
-			knnMethod.testImages(&testImages, k);
+			knnMethod.testImages(testImages, k);
 		}
 
 		// calculo cuanto tardó la ejecución
@@ -90,14 +145,12 @@ try
 		// {
 		// 	cout << "Escribiendo respuesta" << endl;
 
-
 		// 	cout << "OK" << endl;
 		// }
 		// else
 		// {
 		// 	throw 504;
 		// }
-
 	}
 	catch (int e)
 	{
@@ -106,4 +159,3 @@ try
 
 	return 0;
 }
-
