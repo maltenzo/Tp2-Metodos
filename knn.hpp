@@ -59,28 +59,15 @@ public:
 	}
 
 
-	void testImages(string testImagesFileName, int k){
+	void testImages(vector<Matrix>& testImages, int k){
 
 		vector<int> responses;
 
-		ifstream testImagesFile;
-		testImagesFile.open(testImagesFileName);
-		if (testImagesFile.is_open())
-		{
-			string image = "";
-
-			getline(testImagesFile, image); // Primer linea, no la queremos
-			while (getline(testImagesFile, image))
-			{				
-				responses.push_back(recognize(matrixize(image), k));
-			}
-			testImagesFile.close();
+		for (int i = 0; i < testImages->size(); i++)
+		{				
+			responses.push_back(recognize((*testImages)[i], k));
 		}
-		else
-		{
-			throw 503;
-		}
-
+		testImagesFile.close();
 	}
 
 	

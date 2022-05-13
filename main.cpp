@@ -26,6 +26,27 @@ void handleError(int error)
 	}
 }
 
+void csvImagesToMatrixVector(string csvImagesFileName, vector<Matrix>& matrixVector){
+
+	ifstream csvImagesFile;
+	csvImagesFile.open(csvImagesFileName);
+	if (csvImagesFile.is_open())
+	{
+		string image = "";
+
+		getline(csvImagesFile, image); // Primer linea, no la queremos
+		while (getline(csvImagesFile, image))
+		{				
+			matrixVector->push_back(matrixize(image));
+		}
+		csvImagesFile.close();
+	}
+	else
+	{
+		throw 502;
+	}
+
+}
 
 
 
@@ -45,13 +66,16 @@ try
 		if (method > 1 || method < 0)
 			throw 501;
 
+		vector<Matrix> testImages;
+		csvImagesToMatrixVector(testFileName, &testImages);
+
 		// inicio el reloj para medir la duración del algoritmo
 		auto start = chrono::steady_clock::now();
 
 		if(method == 0){ //KNN
 			Knn knnMethod;
 			knnMethod.setDataset(trainFileName);
-			knnMethod.testImages(testFileName, k);
+			knnMethod.testImages(&testImages, k);
 		}
 
 		// calculo cuanto tardó la ejecución
