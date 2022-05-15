@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include "knn.hpp"
+#include "pca.hpp"
 
 using namespace std;
 

@@ -1,5 +1,10 @@
-
+#include "./Eigen/Dense"
+#include <vector>
+#include <tuple>
+#include <fstream>
 using namespace std;
+typedef Eigen::MatrixXd Matrix;
+typedef Eigen::VectorXd MagicVector;
 
 Matrix matrixize(string s, string del = ",")
 {
@@ -77,4 +82,13 @@ void csvImagesToMatrixVector(string csvImagesFileName, vector<Matrix> &matrixVec
 	{
 		throw 502;
 	}
+}
+
+MagicVector getRandomVector(int dimension)
+{
+	MagicVector v;
+	for(int i = 0; i < dimension ; i++){
+		v[i] = rand() / (float)rand();
+	}
+	return v;
 }
