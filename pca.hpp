@@ -74,16 +74,20 @@ Matrix pca::matriz_covariancia_de_imagen(Matrix matImagen){
 void pca::met_potencia(Matrix& M, int colnumber)
 {
 	MagicVector v = getRandomVector(M.rows());
-	float diff = 1;
-	for (int i = 0; i < this->nitter && diff > this->epsilon; i++)
+	for (int i = 0; i < this->nitter ; i++)
 	{
 		MagicVector w = M * v;
 		w = w / w.norm();
-		diff = abs(w.norm() - v.norm()); // esto esta bien?
-		v = w;
+
+		double cos = w.dot(v);
+		if(1-eps < cos && cos <= 1){
+			v = w;
+			break;
+		}
+		
 	}
-	double lambda_non_normal = (v.transpose() * (M * v));
-	double lambda = lambda_non_normal / (v.transpose() * v);
+	double lambda_non_normal = v.dot(M * v);
+	double lambda = lambda_non_normal / v.transpose().dot(v);
 
 	this->autovalores(colnumber) = lambda;
 	this->autovectores.col(colnumber) = v;
