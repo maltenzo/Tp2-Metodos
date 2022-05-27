@@ -92,3 +92,4 @@ MagicVector getRandomVector(int dimension)
 	}
 	return v;
 }
+

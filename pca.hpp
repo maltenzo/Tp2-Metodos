@@ -80,7 +80,7 @@ void pca::met_potencia(Matrix& M, int colnumber)
 		w = w / w.norm();
 
 		double cos = w.dot(v);
-		if(1-eps < cos && cos <= 1){
+		if(1-(this->epsilon) < cos && cos <= 1){
 			v = w;
 			break;
 		}
@@ -103,3 +103,12 @@ void pca::met_potencia_y_defl(){
 
 	}
 };
+
+void transformImagesWithPCA(vector<Matrix>& imageList, int nitter=1000, float epsilon=1e-6, int alpha=28){
+	for(int i = 0; i < imageList.size(); i++){
+		Matrix image = imageList[i];
+		pca PCAMethod(image, nitter, epsilon, alpha);
+		PCAMethod.met_potencia_y_defl();
+		imageList[i] = PCAMethod.get_autovec().transpose() * image;
+	}
+}

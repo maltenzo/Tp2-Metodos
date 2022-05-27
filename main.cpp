@@ -58,7 +58,18 @@ int main(int argc, char **argv)
 			Knn knnMethod;
 			knnMethod.setDataset(trainImages, trainLabels);
 			vector<int> results = knnMethod.testImages(testImages, k);
+		}else if (method == 1)
+		{ //PCA+KNN
+			transformImagesWithPCA(trainImages);
+
+			Knn knnMethod;
+			knnMethod.setDataset(trainImages, trainLabels);
+
+			transformImagesWithPCA(testImages);
+
+			vector<int> results = knnMethod.testImages(testImages, k);
 		}
+		
 
 		// calculo cuanto tardó la ejecución
 		auto end = chrono::steady_clock::now();
