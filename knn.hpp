@@ -42,8 +42,8 @@ public:
 
 	void setDataset(vector<Matrix> dataset, vector<int> labels)
 	{
-		this -> dataset = dataset;
-		this -> labels = labels;
+		this->dataset = dataset;
+		this->labels = labels;
 	}
 
 	vector<int> testImages(vector<Matrix> &testImages, int k)
@@ -76,7 +76,7 @@ private:
 		int indiceDistanciaMaxima;
 		for (int i = 0; i < dataSetSize; i++)
 		{
-			distanciaActual = (imageMatrix - (*dataSet)[i]).norm();
+			distanciaActual = (imageMatrix - (*dataSet)[i]).squaredNorm();
 			distanciaMaximaDeLasKMenores = *max_element(kMenoresDistancias.begin(), kMenoresDistancias.end());
 
 			if (i >= k && distanciaActual < distanciaMaximaDeLasKMenores)
