@@ -50,11 +50,15 @@ int main(int argc, char **argv)
 		vector<Matrix> testImages;
 		csvImagesToMatrixVector(testFileName, testImages);
 
+		//trainImages.resize(20);
+		//testImages.resize(20);
 		// inicio el reloj para medir la duración del algoritmo
 		auto start = chrono::steady_clock::now();
 
 		if (method == 0)
 		{ // KNN
+
+			
 			Knn knnMethod;
 			knnMethod.setDataset(trainImages, trainLabels);
 			vector<int> results = knnMethod.testImages(testImages, k);

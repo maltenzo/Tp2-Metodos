@@ -37,7 +37,7 @@ pca::pca(Matrix A, int nitter,  float epsilon, int alpha)
 	srand(static_cast<unsigned>(time(0)));
 	this->M = matriz_covariancia_de_imagen(A);
 	this->autovalores = MagicVector::Zero(alpha);
-	this->autovectores = Matrix::Zero(alpha,alpha);
+	this->autovectores = Matrix::Zero(A.rows(),alpha);
 	this->nitter = nitter;
 	this->epsilon = epsilon;
 	this->alpha = alpha;
@@ -90,7 +90,7 @@ void pca::met_potencia(Matrix& M, int colnumber)
 	double lambda = lambda_non_normal / v.transpose().dot(v);
 
 	this->autovalores(colnumber) = lambda;
-	this->autovectores.col(colnumber) = v;
+	this->autovectores.col(colnumber) = v.transpose();
 }
 
 void pca::met_potencia_y_defl(){

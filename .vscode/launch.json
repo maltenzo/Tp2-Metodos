@@ -1,0 +1,25 @@
+{
+    "configurations": [
+    {
+        "name": "tp2",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/tp2",
+        "args": ["./train.csv", "./test.csv", "4", "1"],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "gdb",
+        "setupCommands": [
+            {
+                "description": "Enable pretty-printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            }
+        ],
+        "preLaunchTask": "C/C++: g++ build active file",
+        "miDebuggerPath": "/usr/bin/gdb"
+    }
+    ]
+}

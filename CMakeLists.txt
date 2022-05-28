@@ -8,4 +8,5 @@ add_executable(tp2 main.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+set(CMAKE_BUILD_TYPE Debug)
 include(CPack)

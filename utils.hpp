@@ -86,7 +86,7 @@ void csvImagesToMatrixVector(string csvImagesFileName, vector<Matrix> &matrixVec
 
 MagicVector getRandomVector(int dimension)
 {
-	MagicVector v;
+	MagicVector v = MagicVector::Ones(dimension);
 	for(int i = 0; i < dimension ; i++){
 		v[i] = rand() / (float)rand();
 	}
