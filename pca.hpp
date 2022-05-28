@@ -74,6 +74,8 @@ Matrix pca::matriz_covariancia_de_imagen(Matrix matImagen){
 void pca::met_potencia(Matrix& M, int colnumber)
 {
 	MagicVector v = getRandomVector(M.rows());
+	v = v.cwiseAbs();
+	v = v/v.norm();
 	for (int i = 0; i < this->nitter ; i++)
 	{
 		MagicVector w = M * v;
@@ -104,11 +106,11 @@ void pca::met_potencia_y_defl(){
 	}
 };
 
-void transformImagesWithPCA(vector<Matrix>& imageList, int nitter=1000, float epsilon=1e-6, int alpha=28){
+void transformImagesWithPCA(vector<Matrix>& imageList, int nitter=1000, float epsilon=1e-9, int alpha=15){
 	for(int i = 0; i < imageList.size(); i++){
 		Matrix image = imageList[i];
 		pca PCAMethod(image, nitter, epsilon, alpha);
 		PCAMethod.met_potencia_y_defl();
-		imageList[i] = PCAMethod.get_autovec().transpose() * image;
+		imageList[i] = image * PCAMethod.get_autovec();
 	}
 }

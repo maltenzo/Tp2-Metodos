@@ -5,7 +5,7 @@
         "type": "cppdbg",
         "request": "launch",
         "program": "${workspaceFolder}/build/tp2",
-        "args": ["./train.csv", "./test.csv", "4", "1"],
+        "args": ["./train.csv", "./test.csv", "6", "1"],
         "stopAtEntry": false,
         "cwd": "${workspaceFolder}",
         "environment": [],
