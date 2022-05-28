@@ -10,7 +10,9 @@ void handleError(int error)
 
 	if (error == 500)
 	{
-		clog << "La entrada debe tener 4 argumentos: archivo de entrenamiento, archivo de prueba, cantidad de vecinos (k) y método (0 KNN, 1 PCA)" << endl;
+		clog << "La entrada debe tener 5 u 8 argumentos: " << endl;
+		clog << "	Archivo de entrenamiento, archivo de prueba, archivo de salida, cantidad de vecinos (k), método (0 kNN, 1 PCA+kNN) "<< endl;
+		clog << "	Ademas, si se eligió PCA: cantidad de iteraciones, punto de corte (epsilon), cantidad de componentes principales (alfa)" << endl;
 	}
 	else if (error == 501)
 	{
@@ -30,17 +32,25 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		if (argc != 5)
+		if (argc != 6 && argc != 9)
 			throw 500;
 
 		string trainFileName = argv[1];
 		string testFileName = argv[2];
+		string outputFileName = argv[3];
 
-		int k = stoi(argv[3]);
-		int method = stoi(argv[4]);
+		int k = stoi(argv[4]);
+		int method = stoi(argv[5]);
+		int nitter, epsilon, alfa;
 
-		if (method > 1 || method < 0)
+		if (method > 1 || method < 0){
 			throw 501;
+		}
+		else if(method == 1){
+			nitter = stoi(argv[6]);
+			epsilon = stoi(argv[7]);
+			alfa = stoi(argv[8]);
+		}
 
 		vector<int> trainLabels;
 		vector<Matrix> trainImages;
@@ -52,28 +62,28 @@ int main(int argc, char **argv)
 
 		//trainImages.resize(20);
 		//testImages.resize(20);
+
+
+		vector<int> results;
 		// inicio el reloj para medir la duración del algoritmo
 		auto start = chrono::steady_clock::now();
 
 		if (method == 0)
 		{ // KNN
-
-			
 			Knn knnMethod;
 			knnMethod.setDataset(trainImages, trainLabels);
-			vector<int> results = knnMethod.testImages(testImages, k);
+			results = knnMethod.testImages(testImages, k);
 		}else if (method == 1)
 		{ //PCA+KNN
-			transformImagesWithPCA(trainImages);
+			transformImagesWithPCA(trainImages, nitter, epsilon, alfa);
 
 			Knn knnMethod;
 			knnMethod.setDataset(trainImages, trainLabels);
 
-			transformImagesWithPCA(testImages);
+			transformImagesWithPCA(testImages, nitter, epsilon, alfa);
 
-			vector<int> results = knnMethod.testImages(testImages, k);
-		}
-		
+			results = knnMethod.testImages(testImages, k);
+		}		
 
 		// calculo cuanto tardó la ejecución
 		auto end = chrono::steady_clock::now();
@@ -81,18 +91,25 @@ int main(int argc, char **argv)
 
 		cerr << tiempoDeEjecucion << endl;
 
-		// ofstream outputFile;
-		// outputFile.open(outputFileName);
-		// if (outputFile.is_open())
-		// {
-		// 	cout << "Escribiendo respuesta" << endl;
+		ofstream outputFile;
+		outputFile.open(outputFileName);
+		if (outputFile.is_open())
+		{
+			cout << "Escribiendo respuesta" << endl;
 
-		// 	cout << "OK" << endl;
-		// }
-		// else
-		// {
-		// 	throw 504;
-		// }
+			string resultado;
+
+			for(int i = 0 ; i < results.size() ; i++){
+				resultado = to_string(results[i]) + "\n";
+				outputFile.write(resultado.c_str(), resultado.size());
+			}
+
+			cout << "OK" << endl;
+		}
+		else
+		{
+			throw 504;
+		}
 	}
 	catch (int e)
 	{
