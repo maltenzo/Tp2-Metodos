@@ -61,7 +61,7 @@ int main(int argc, char **argv)
 		csvImagesToMatrixVector(testFileName, testImages);
 
 		//trainImages.resize(20);
-		//testImages.resize(20);
+		//testImages.resize(5);
 
 
 		vector<int> results;
@@ -75,12 +75,12 @@ int main(int argc, char **argv)
 			results = knnMethod.testImages(testImages, k);
 		}else if (method == 1)
 		{ //PCA+KNN
-			transformImagesWithPCA(trainImages, nitter, epsilon, alfa);
+			Matrix vTrans = transformTrainImagesWithPCA(trainImages, nitter, epsilon, alfa);
 
 			Knn knnMethod;
 			knnMethod.setDataset(trainImages, trainLabels);
 
-			transformImagesWithPCA(testImages, nitter, epsilon, alfa);
+			transformTestImagesWithPCA(testImages, vTrans);
 
 			results = knnMethod.testImages(testImages, k);
 		}		

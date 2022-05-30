@@ -6,10 +6,23 @@ using namespace std;
 typedef Eigen::MatrixXd Matrix;
 typedef Eigen::VectorXd MagicVector;
 
+Matrix aplanar_matrices(vector<Matrix> vM){
+	int n = vM.size();
+	int cols = vM[0].cols();
+	int rows = vM[0].rows();
+	Matrix flatVer(n, cols*rows);
+
+	for(int k = 0; k < n; k++){
+		flatVer.row(k) = vM[k].reshaped(1, cols*rows);
+	}
+	return flatVer;
+}
+
 class pca
 {
 private:
 	/* data */
+	Matrix imgsFlat;
 	Matrix M;
 	MagicVector autovalores;
 	Matrix autovectores;
@@ -18,26 +31,27 @@ private:
 	int alpha;
 
 	Matrix matriz_covariancia_de_imagen(Matrix matImagen);
+	void met_potencia(Matrix& M, int colnumber);
 
 public:
+	Matrix get_flat_imgs();
 	Matrix get_matrix();
 	MagicVector get_autoval();
 	Matrix get_autovec();
 
-	void met_potencia(Matrix& M, int colnumber);
-
 	void met_potencia_y_defl();
 
-	pca( Matrix A, int nitter, float epsilon, int alpha);
+	pca( vector<Matrix> A, int nitter, float epsilon, int alpha);
 	~pca();
 };
 
-pca::pca(Matrix A, int nitter,  float epsilon, int alpha)
+pca::pca(vector<Matrix> A, int nitter,  float epsilon, int alpha)
 {
 	srand(static_cast<unsigned>(time(0)));
-	this->M = matriz_covariancia_de_imagen(A);
+	this->imgsFlat = aplanar_matrices(A);
+	this->M = matriz_covariancia_de_imagen(this->imgsFlat);
 	this->autovalores = MagicVector::Zero(alpha);
-	this->autovectores = Matrix::Zero(A.rows(),alpha);
+	this->autovectores = Matrix::Zero(this->imgsFlat.cols(),alpha);
 	this->nitter = nitter;
 	this->epsilon = epsilon;
 	this->alpha = alpha;
@@ -45,6 +59,10 @@ pca::pca(Matrix A, int nitter,  float epsilon, int alpha)
 
 pca::~pca()
 {
+}
+
+Matrix pca::get_flat_imgs(){
+	return this->imgsFlat;
 }
 
 Matrix pca::get_matrix()
@@ -62,9 +80,12 @@ Matrix pca::get_autovec(){
 }
 
 Matrix pca::matriz_covariancia_de_imagen(Matrix matImagen){
-	int n = matImagen.cols();
-	for(int i = 0; i < n; i++){
-		matImagen.col(i) = ( matImagen.col(i) - matImagen.col(i).mean()*MagicVector::Ones(n) )/sqrt(n-1);
+
+	int n = matImagen.rows();
+	Matrix mu = matImagen.colwise().mean();
+
+	for(int i = 0; i<n; i++){
+		matImagen.row(i) = (matImagen.row(i) - mu.row(0))/sqrt(n-1);
 	}
 
 	return matImagen.transpose()*matImagen;
@@ -106,11 +127,21 @@ void pca::met_potencia_y_defl(){
 	}
 };
 
-void transformImagesWithPCA(vector<Matrix>& imageList, int nitter=1000, float epsilon=1e-9, int alpha=15){
+Matrix transformTrainImagesWithPCA(vector<Matrix>& imageList, int nitter=1000, float epsilon=1e-9, int alpha=15){
+	
+	pca PCAMethod(imageList, nitter, epsilon, alpha);
+	PCAMethod.met_potencia_y_defl();
+	Matrix transformedImages = PCAMethod.get_flat_imgs() * PCAMethod.get_autovec();;
 	for(int i = 0; i < imageList.size(); i++){
-		Matrix image = imageList[i];
-		pca PCAMethod(image, nitter, epsilon, alpha);
-		PCAMethod.met_potencia_y_defl();
-		imageList[i] = image * PCAMethod.get_autovec();
+		imageList[i] = transformedImages.row(i);
+	}
+	return PCAMethod.get_autovec();
+}
+
+void transformTestImagesWithPCA(vector<Matrix>& imageList, Matrix vTrans){
+
+	Matrix transformedImages = aplanar_matrices(imageList) * vTrans;
+	for(int i = 0; i < imageList.size(); i++){
+		imageList[i] = transformedImages.row(i);
 	}
 }
