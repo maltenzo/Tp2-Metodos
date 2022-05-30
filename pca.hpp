@@ -6,18 +6,6 @@ using namespace std;
 typedef Eigen::MatrixXd Matrix;
 typedef Eigen::VectorXd MagicVector;
 
-Matrix aplanar_matrices(vector<Matrix> vM){
-	int n = vM.size();
-	int cols = vM[0].cols();
-	int rows = vM[0].rows();
-	Matrix flatVer(n, cols*rows);
-
-	for(int k = 0; k < n; k++){
-		flatVer.row(k) = vM[k].reshaped(1, cols*rows);
-	}
-	return flatVer;
-}
-
 class pca
 {
 private:
@@ -126,6 +114,7 @@ void pca::met_potencia_y_defl(){
 
 	}
 };
+
 
 Matrix transformTrainImagesWithPCA(vector<Matrix>& imageList, int nitter=1000, float epsilon=1e-9, int alpha=15){
 	

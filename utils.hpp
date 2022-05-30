@@ -93,3 +93,14 @@ MagicVector getRandomVector(int dimension)
 	return v;
 }
 
+Matrix aplanar_matrices(vector<Matrix> vM){
+	int n = vM.size();
+	int cols = vM[0].cols();
+	int rows = vM[0].rows();
+	Matrix flatVer(n, cols*rows);
+
+	for(int k = 0; k < n; k++){
+		flatVer.row(k) = vM[k].reshaped(1, cols*rows);
+	}
+	return flatVer;
+}
