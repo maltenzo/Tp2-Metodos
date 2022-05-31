@@ -60,8 +60,8 @@ int main(int argc, char **argv)
 		vector<Matrix> testImages;
 		csvImagesToMatrixVector(testFileName, testImages);
 
-		trainImages.resize(20);
-		testImages.resize(5);
+		//trainImages.resize(20);
+		//testImages.resize(5);
 
 
 		vector<int> results;
