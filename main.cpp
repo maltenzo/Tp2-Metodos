@@ -60,8 +60,8 @@ int main(int argc, char **argv)
 		vector<Matrix> testImages;
 		csvImagesToMatrixVector(testFileName, testImages);
 
-		//trainImages.resize(20);
-		//testImages.resize(5);
+		trainImages.resize(20);
+		testImages.resize(5);
 
 
 		vector<int> results;
@@ -75,12 +75,15 @@ int main(int argc, char **argv)
 			results = knnMethod.testImages(testImages, k);
 		}else if (method == 1)
 		{ //PCA+KNN
-			Matrix vTrans = transformTrainImagesWithPCA(trainImages, nitter, epsilon, alfa);
+
+			pca PCAMethod = pca(trainImages, nitter, epsilon, alfa);
+			PCAMethod.met_potencia_y_defl();
+			PCAMethod.transform_train_images(trainImages);
+			PCAMethod.transform_test_images(testImages);
 
 			Knn knnMethod;
 			knnMethod.setDataset(trainImages, trainLabels);
 
-			transformTestImagesWithPCA(testImages, vTrans);
 
 			results = knnMethod.testImages(testImages, k);
 		}		

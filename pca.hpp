@@ -10,24 +10,29 @@ class pca
 {
 private:
 	/* data */
-	Matrix imgsFlat;
-	Matrix M;
+	Matrix mu;
+	Matrix X;
+	Matrix Mx;
 	MagicVector autovalores;
 	Matrix autovectores;
+	int n;
 	int nitter;
 	float epsilon;
 	int alpha;
 
-	Matrix matriz_covariancia_de_imagen(Matrix matImagen);
+	void matriz_varianza_0(Matrix matImagen);
 	void met_potencia(Matrix& M, int colnumber);
 
 public:
-	Matrix get_flat_imgs();
-	Matrix get_matrix();
+	Matrix get_mu();
+	Matrix get_X();
+	Matrix get_Mx();
 	MagicVector get_autoval();
 	Matrix get_autovec();
 
 	void met_potencia_y_defl();
+	void transform_train_images(vector<Matrix>& ImageList);
+	void transform_test_images(vector<Matrix>& ImageList);
 
 	pca( vector<Matrix> A, int nitter, float epsilon, int alpha);
 	~pca();
@@ -36,10 +41,9 @@ public:
 pca::pca(vector<Matrix> A, int nitter,  float epsilon, int alpha)
 {
 	srand(static_cast<unsigned>(time(0)));
-	this->imgsFlat = aplanar_matrices(A);
-	this->M = matriz_covariancia_de_imagen(this->imgsFlat);
+	this->matriz_varianza_0(aplanar_matrices(A));
 	this->autovalores = MagicVector::Zero(alpha);
-	this->autovectores = Matrix::Zero(this->imgsFlat.cols(),alpha);
+	this->autovectores = Matrix::Zero(this->X.cols(),alpha);
 	this->nitter = nitter;
 	this->epsilon = epsilon;
 	this->alpha = alpha;
@@ -49,13 +53,18 @@ pca::~pca()
 {
 }
 
-Matrix pca::get_flat_imgs(){
-	return this->imgsFlat;
+Matrix pca::get_mu(){
+	return this->mu;
 }
 
-Matrix pca::get_matrix()
+Matrix pca::get_X()
 {
-	return this->M;
+	return this->X;
+};
+
+Matrix pca::get_Mx()
+{
+	return this->Mx;
 };
 
 MagicVector pca::get_autoval()
@@ -67,16 +76,17 @@ Matrix pca::get_autovec(){
 	return this->autovectores;
 }
 
-Matrix pca::matriz_covariancia_de_imagen(Matrix matImagen){
+void pca::matriz_varianza_0(Matrix matImagen){
 
-	int n = matImagen.rows();
-	Matrix mu = matImagen.colwise().mean();
+	this->n = matImagen.rows();
+	this->mu = matImagen.colwise().mean();
 
-	for(int i = 0; i<n; i++){
-		matImagen.row(i) = (matImagen.row(i) - mu.row(0))/sqrt(n-1);
+	for(int i = 0; i<this->n; i++){
+		matImagen.row(i) = (matImagen.row(i) - this->mu.row(0))/sqrt(n-1);
 	}
 
-	return matImagen.transpose()*matImagen;
+	this->X = matImagen;
+	this->Mx = matImagen.transpose()*matImagen;
 }
 
 // revisar porque lo hizo enzo
@@ -105,7 +115,7 @@ void pca::met_potencia(Matrix& M, int colnumber)
 }
 
 void pca::met_potencia_y_defl(){
-	Matrix MDefl = this->M;
+	Matrix MDefl = this->Mx;
 	for(int i = 0; i < this->alpha; i++){
 		this->met_potencia(MDefl, i);
 		float lambda = this->autovalores(i);
@@ -115,22 +125,17 @@ void pca::met_potencia_y_defl(){
 	}
 };
 
-
-Matrix transformTrainImagesWithPCA(vector<Matrix>& imageList, int nitter=1000, float epsilon=1e-9, int alpha=15){
-	
-	pca PCAMethod(imageList, nitter, epsilon, alpha);
-	PCAMethod.met_potencia_y_defl();
-	Matrix transformedImages = PCAMethod.get_flat_imgs() * PCAMethod.get_autovec();;
-	for(int i = 0; i < imageList.size(); i++){
-		imageList[i] = transformedImages.row(i);
+void pca::transform_train_images(vector<Matrix>& ImageList){
+	Matrix transformedImages = this->X * this->autovectores;
+	for(int i = 0; i < ImageList.size(); i++){
+		ImageList[i] = transformedImages.row(i);
 	}
-	return PCAMethod.get_autovec();
-}
+};
 
-void transformTestImagesWithPCA(vector<Matrix>& imageList, Matrix vTrans){
-
-	Matrix transformedImages = aplanar_matrices(imageList) * vTrans;
-	for(int i = 0; i < imageList.size(); i++){
-		imageList[i] = transformedImages.row(i);
+void pca::transform_test_images(vector<Matrix>& ImageList){
+	Matrix flatTest = aplanar_matrices(ImageList);
+	for(int i = 0; i<ImageList.size(); i++){
+		flatTest.row(i) = (flatTest.row(i) - this->mu)/sqrt(this->n - 1);
+		ImageList[i] = flatTest.row(i) * this->autovectores;
 	}
-}
+};
