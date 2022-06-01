@@ -20,11 +20,7 @@ void handleError(int error)
 	}
 	else if (error == 502)
 	{
-		clog << "Error al abrir el archivo de entrenamiento" << endl;
-	}
-	else if (error == 503)
-	{
-		clog << "Error al abrir el archivo de prueba" << endl;
+		clog << "Error al abrir alguno de los archivos de entrada" << endl;
 	}
 }
 
