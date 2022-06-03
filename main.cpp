@@ -97,6 +97,7 @@ int main(int argc, char **argv)
 			cout << "Escribiendo respuesta" << endl;
 
 			string resultado;
+			outputFile.write("label\n", 6);
 
 			for(int i = 0 ; i < results.size() ; i++){
 				resultado = to_string(results[i]) + "\n";
