@@ -28,5 +28,5 @@ target_link_libraries(tp2 LINK_PUBLIC OpenMP::OpenMP_CXX)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Debug)
 include(CPack)
