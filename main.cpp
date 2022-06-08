@@ -71,17 +71,22 @@ int main(int argc, char **argv)
 			results = knnMethod.testImages(testImages, k);
 		}else if (method == 1)
 		{ //PCA+KNN
-
+			cout << "Entra en PCA OK" << endl;
 			pca PCAMethod = pca(trainImages, nitter, epsilon, alfa);
+			cout << "Crea PCA OK" << endl;
 			PCAMethod.met_potencia_y_defl();
+			cout << "Met pot OK" << endl;
 			PCAMethod.transform_train_images(trainImages);
+			cout << "Transform Train OK" << endl;			
 			PCAMethod.transform_test_images(testImages);
+			cout << "Transform TEST OK" << endl;
 
 			Knn knnMethod;
 			knnMethod.setDataset(trainImages, trainLabels);
-
+			cout << "Crea KNN OK" << endl;
 
 			results = knnMethod.testImages(testImages, k);
+			cout << "knn.testImages OK" << endl;
 		}		
 
 		// calculo cuanto tardó la ejecución
