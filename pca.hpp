@@ -41,6 +41,7 @@ public:
 pca::pca(vector<Matrix> A, int nitter,  float epsilon, int alpha)
 {
 	srand(static_cast<unsigned>(time(0)));
+	this->X = Matrix::Zero(A.size(), A[0].size());
 	this->matriz_varianza_0(aplanar_matrices(A));
 	this->autovalores = MagicVector::Zero(alpha);
 	this->autovectores = Matrix::Zero(this->X.cols(),alpha);
@@ -82,11 +83,10 @@ void pca::matriz_varianza_0(Matrix matImagen){
 	this->mu = matImagen.colwise().mean();
 
 	for(int i = 0; i<this->n; i++){
-		matImagen.row(i) = (matImagen.row(i) - this->mu.row(0))/sqrt(n-1);
+		this->X.row(i) = (matImagen.row(i) - this->mu.row(0))/sqrt(n-1);
 	}
 
-	this->X = matImagen;
-	this->Mx = matImagen.transpose()*matImagen;
+	this->Mx = (this->X).transpose()*(this->X);
 }
 
 // revisar porque lo hizo enzo
