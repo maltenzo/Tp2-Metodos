@@ -5,7 +5,7 @@
         "type": "cppdbg",
         "request": "launch",
         "program": "${workspaceFolder}/build/tp2",
-        "args": ["./train.csv", "./test.csv", "./resultados/resultados.csv", "4", "1", "1000", "1e-6", "20"],
+        "args": ["./Data/5_fold-SET-1-train.csv", "./Data/5_fold-SET-1-validate.csv", "./resultados/5_fold-SET-1-1-vecinos-resultados.csv", "1", "1", "1000", "1e-6", "20"],
         "stopAtEntry": false,
         "cwd": "${workspaceFolder}",
         "environment": [],
