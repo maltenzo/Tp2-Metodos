@@ -1,6 +1,7 @@
 # NOTE(fragofer): based on Example CMakeLists.txt from project CryFS to automatically find OpenMP https://github.com/cryfs/cryfs/blob/08ed96680876c960d5aab0aabebb25206f0bda06/vendor/cryptopp/CMakeLists.txt
 
 if(USE_OpenMP)
+    message(STATUS "OpenMP")
     if (MSVC)
         message(WARNING "MSVC does not support the OpenMP 4.0 standard used by Crypto++. Disabling OpenMP. This can cause degraded performance.")
     else()
