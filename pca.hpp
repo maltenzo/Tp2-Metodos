@@ -40,7 +40,7 @@ public:
 
 pca::pca(vector<Matrix> A, int nitter,  float epsilon, int alpha)
 {
-	srand(static_cast<unsigned>(time(0)));
+	//srand(static_cast<unsigned>(time(0)));
 	this->X = Matrix::Zero(A.size(), A[0].size());
 	this->matriz_varianza_0(aplanar_matrices(A));
 	this->autovalores = MagicVector::Zero(alpha);
@@ -92,7 +92,7 @@ void pca::matriz_varianza_0(Matrix matImagen){
 // revisar porque lo hizo enzo
 void pca::met_potencia(Matrix& M, int colnumber)
 {
-	MagicVector v = getRandomVector(M.rows());
+	MagicVector v = MagicVector::Ones(M.rows());
 	v = v.cwiseAbs();
 	v = v/v.norm();
 	for (int i = 0; i < this->nitter ; i++)
