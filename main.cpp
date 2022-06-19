@@ -37,14 +37,15 @@ int main(int argc, char **argv)
 
 		int k = stoi(argv[4]);
 		int method = stoi(argv[5]);
-		int nitter, epsilon, alfa;
+		int nitter, alfa;
+		float epsilon;
 
 		if (method > 1 || method < 0){
 			throw 501;
 		}
 		else if(method == 1){
 			nitter = stoi(argv[6]);
-			epsilon = stoi(argv[7]);
+			epsilon = stof(argv[7]);
 			alfa = stoi(argv[8]);
 		}
 
@@ -56,8 +57,8 @@ int main(int argc, char **argv)
 		vector<Matrix> testImages;
 		csvImagesToMatrixVector(testFileName, testImages);
 
-		//trainImages.resize(20);
-		//testImages.resize(5);
+		trainImages.resize(200);
+		testImages.resize(50);
 
 
 		vector<int> results;
@@ -73,8 +74,29 @@ int main(int argc, char **argv)
 		{ //PCA+KNN
 			
 			pca PCAMethod = pca(trainImages, nitter, epsilon, alfa);
-			
+
 			PCAMethod.met_potencia_y_defl();
+
+			ofstream pcaFile;
+			pcaFile.open("./pca1.csv");
+			if (pcaFile.is_open())
+			{
+				cout << "Escribiendo Datos de PCA" << endl;
+
+				string resultado;
+				pcaFile << "mu, X, Mx, autovalores, autovectores \n";
+
+				pcaFile << PCAMethod.get_mu() << ",";
+				pcaFile << PCAMethod.get_X() << ",";
+				pcaFile << PCAMethod.get_autoval() << ",";
+				pcaFile << PCAMethod.get_autovec();
+				pcaFile.close();	
+			}
+			else
+			{
+				throw 504;
+			}
+
 			
 			PCAMethod.transform_train_images(trainImages);
 			
